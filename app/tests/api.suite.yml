@@ -1,0 +1,30 @@
+actor: ApiTester
+class_name: ApiTester
+modules:
+    enabled:
+        - Cli
+        - Symfony:
+              app_path: 'src'
+              environment: 'test'
+        - REST:
+            url: /
+            depends: Symfony
+        - Doctrine2:
+            depends: Symfony
+        - \App\Tests\Helper\Api
+        - Db:
+            dsn: 'pgsql:host=database'
+            user: 'main'
+            password: 'main'
+            databases:
+                test_db:
+                    dsn: 'pgsql:host=database;dbname=test_db'
+                    user: 'main'
+                    password: 'main'
+            initial_queries:
+                - 'DROP DATABASE IF EXISTS test_db;'
+                - 'CREATE DATABASE test_db;'
+extensions:
+    enabled:
+        - App\Tests\Extensions\DatabaseMigrationExtension:
+              depends: Cli

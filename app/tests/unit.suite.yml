@@ -1,0 +1,34 @@
+# Codeception Test Suite Configuration
+#
+# Suite for unit or integration tests.
+
+actor: UnitTester
+params:
+    - .env.test
+modules:
+    enabled:
+        - Cli
+        - Symfony:
+            app_path: 'src'
+            environment: 'test'
+        - Asserts
+        - Doctrine2:
+            depends: Symfony
+            cleanup: false
+        - \App\Tests\Helper\Unit
+        - Db:
+            dsn: 'pgsql:host=database'
+            user: 'main'
+            password: 'main'
+            databases:
+                test_db:
+                    dsn: 'pgsql:host=database;dbname=test_db'
+                    user: 'main'
+                    password: 'main'
+            initial_queries:
+                - 'DROP DATABASE IF EXISTS test_db;'
+                - 'CREATE DATABASE test_db;'
+extensions:
+    enabled:
+        - App\Tests\Extensions\DatabaseMigrationExtension:
+            depends: Cli
